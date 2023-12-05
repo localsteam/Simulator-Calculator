@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulator Tools</title>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-size: 1.5rem;
+            background-color: #222222;
+            text-align: center;
+            margin: 50px;
+        }
+
+        .form__group {
+            position: relative;
+            padding: 15px 0 0;
+            margin-top: 10px;
+            width: 50%;
+        }
+
+        .form__field {
+            font-family: inherit;
+            width: 100%;
+            border: 0;
+            border-bottom: 2px solid #9b9b9b;
+            outline: 0;
+            font-size: 1.3rem;
+            color: #fff;
+            padding: 7px 0;
+            background: transparent;
+            transition: all 0.3s ease;
+
+            &::placeholder {
+                color: transparent;
+            }
+
+            &:placeholder-shown~.form__label {
+                font-size: 1.3rem;
+                cursor: text;
+                top: 20px;
+            }
+        }
+
+        .form__label {
+            position: absolute;
+            top: 0;
+            display: block;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: #9b9b9b;
+        }
+
+        .form__field:focus {
+            ~.form__label {
+                position: absolute;
+                top: 0;
+                display: block;
+                transition: all 0.3s ease;
+                font-size: 1rem;
+                color: #11998e;
+                font-weight: 700;
+            }
+            padding-bottom: 6px;
+            font-weight: 700;
+            border-width: 3px;
+            border-image: linear-gradient(to right, #11998e, #38ef7d);
+            border-image-slice: 1;
+        }
+
+        .form__field:not(:focus):not(:placeholder-shown) {
+            border-bottom: 2px solid #11998e;
+        }
+
+        .form__field:required,
+        .form__field:invalid {
+            box-shadow: none;
+        }
+
+        h1 {
+            color: #11998e;
+        }
+
+        .button-85 {
+            padding: 0.6em 2em;
+            border: none;
+            outline: none;
+            color: rgb(17, 153, 142);
+            background: #111;
+            cursor: pointer;
+            position: relative;
+            z-index: 0;
+            border-radius: 10px;
+            user-select: text;
+            -webkit-user-select: text;
+            touch-action: manipulation;
+            margin-top: 50px;
+        }
+
+        .button-85:before {
+            content: "";
+            background: linear-gradient(
+                45deg,
+                #11998e,
+                #38ef7d,
+                #9b9b9b,
+                #11998e,
+                #38ef7d,
+                #9b9b9b,
+                #11998e,
+                #38ef7d,
+                #9b9b9b
+            );
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            background-size: 400%;
+            z-index: -1;
+            filter: blur(5px);
+            -webkit-filter: blur(5px);
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            animation: glowing-button-85 20s linear infinite;
+            transition: opacity 0.3s ease-in-out;
+            border-radius: 10px;
+        }
+
+        @keyframes glowing-button-85 {
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 400% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+
+        .button-85:after {
+            z-index: -1;
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #222;
+            left: 0;
+            top: 0;
+            border-radius: 10px;
+        }
+
+        #result {
+            color: #11998e;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #1d1d1d;
+            border-radius: 10px;
+            display: none; /* Hide by default */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Simulator Tools</h1>
+    <div class="form__group">
+        <input type="number" class="form__field" placeholder="Enter Power Consumption per Minute (Gems/Coins)" id="powerConsumption"
+            required>
+        <label for="powerConsumption" class="form__label">Points per Minute</label>
+    </div>
+    <button class="button-85" role="button" onclick="calculateCost()">Calculate</button>
+    <div id="result"></div>
+
+    <script>
+        function formatNumber(number) {
+            // Format large numbers
+            const suffixes = ["", "K", "M", "B", "T", "QD"];
+            let suffixIndex = 0;
+
+            while (number >= 1000 && suffixIndex < suffixes.length - 1) {
+                number /= 1000;
+                suffixIndex++;
+            }
+
+            return number.toFixed(2) + suffixes[suffixIndex];
+        }
+
+        function calculateCost() {
+            var powerConsumption = parseFloat(document.getElementById("powerConsumption").value);
+
+            // Check if the input is a valid number
+            if (isNaN(powerConsumption)) {
+                alert("Please enter a valid number for power consumption.");
+                return;
+            }
+
+            // Assuming 1 minute as default duration and $0.12 as default cost per unit
+            var durationInMinutes = 1;
+            var costPerUnit = 0.12;
+
+            var totalCost = powerConsumption * durationInMinutes * costPerUnit;
+
+            var resultContainer = document.getElementById("result");
+            
+            // Show the result box
+            resultContainer.style.display = "block";
+
+            resultContainer.innerHTML = `
+                <div style="border: 2px solid #11998e; padding: 10px; border-radius: 5px;">
+                    <p>Minute: ${formatNumber(powerConsumption)}</p>
+                    <p>Hour: ${formatNumber(powerConsumption * 60)}</p>
+                    <p>Day: ${formatNumber(powerConsumption * 60 * 24)}</p>
+                    <p>Week: ${formatNumber(powerConsumption * 60 * 24 * 7)}</p>
+                    <p>Month: ${formatNumber(powerConsumption * 60 * 24 * 30)}</p>
+                    <p>Year: ${formatNumber(powerConsumption * 60 * 24 * 365)}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+
+</html>
